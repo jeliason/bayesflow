@@ -3,22 +3,22 @@ import numpy as np
 
 
 @serializable(package="bayesflow.data_adapters")
-class Transform:
-    def __call__(self, data: dict[str, np.ndarray], inverse: bool = False) -> dict[str, np.ndarray]:
+class ElementwiseTransform:
+    def __call__(self, data: np.ndarray, inverse: bool = False):
         if inverse:
             return self.inverse(data)
 
         return self.forward(data)
 
     @classmethod
-    def from_config(cls, config: dict, custom_objects=None) -> "Transform":
+    def from_config(cls, config: dict, custom_objects=None) -> "ElementwiseTransform":
         raise NotImplementedError
 
     def get_config(self) -> dict:
         raise NotImplementedError
 
-    def forward(self, data: dict[str, np.ndarray]) -> dict[str, np.ndarray]:
+    def forward(self, data: np.ndarray) -> np.ndarray:
         raise NotImplementedError
 
-    def inverse(self, data: dict[str, np.ndarray]) -> dict[str, np.ndarray]:
+    def inverse(self, data: np.ndarray) -> np.ndarray:
         raise NotImplementedError
