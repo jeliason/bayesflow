@@ -24,18 +24,21 @@ class ToArray(ElementwiseTransform):
     def get_config(self) -> dict:
         return {"original_type": serialize(self.original_type)}
 
-    def forward(self, data: any) -> np.ndarray:
+    def forward(self, data: any, **kwargs) -> np.ndarray:
         if self.original_type is None:
             self.original_type = type(data)
 
         return np.asarray(data)
 
-    def inverse(self, data: np.ndarray) -> any:
+    def inverse(self, data: np.ndarray, **kwargs) -> any:
         if self.original_type is None:
             raise RuntimeError("Cannot call `inverse` before calling `forward` at least once.")
 
         if issubclass(self.original_type, Number):
-            return self.original_type(data.item())
+            try:
+                return self.original_type(data.item())
+            except ValueError:
+                pass
 
         # cannot invert
         return data

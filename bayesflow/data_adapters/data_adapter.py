@@ -7,6 +7,7 @@ from keras.saving import (
 import numpy as np
 
 from .transforms import (
+    Broadcast,
     Concatenate,
     Constrain,
     ConvertDType,
@@ -45,27 +46,27 @@ class DataAdapter:
     def get_config(self) -> dict:
         return {"transforms": serialize(self.transforms)}
 
-    def forward(self, data: dict[str, any]) -> dict[str, np.ndarray]:
+    def forward(self, data: dict[str, any], **kwargs) -> dict[str, np.ndarray]:
         data = data.copy()
 
         for transform in self.transforms:
-            data = transform(data)
+            data = transform(data, **kwargs)
 
         return data
 
-    def inverse(self, data: dict[str, np.ndarray]) -> dict[str, any]:
+    def inverse(self, data: dict[str, np.ndarray], **kwargs) -> dict[str, any]:
         data = data.copy()
 
         for transform in reversed(self.transforms):
-            data = transform(data, inverse=True)
+            data = transform(data, inverse=True, **kwargs)
 
         return data
 
-    def __call__(self, data: dict[str, any], inverse: bool = False) -> dict[str, np.ndarray]:
+    def __call__(self, data: dict[str, any], *, inverse: bool = False, **kwargs) -> dict[str, np.ndarray]:
         if inverse:
-            return self.inverse(data)
+            return self.inverse(data, **kwargs)
 
-        return self.forward(data)
+        return self.forward(data, **kwargs)
 
     def add_transform(self, transform: Transform):
         self.transforms.append(transform)
@@ -93,11 +94,22 @@ class DataAdapter:
         self.transforms.append(transform)
         return self
 
+    def broadcast(self, keys: str | Sequence[str], *, expand_scalars: bool = True):
+        if isinstance(keys, str):
+            keys = [keys]
+
+        transform = MapTransform({key: Broadcast(expand_scalars=expand_scalars) for key in keys})
+        self.transforms.append(transform)
+        return self
+
     def clear(self):
         self.transforms = []
         return self
 
     def concatenate(self, keys: Sequence[str], *, into: str, axis: int = -1):
+        if isinstance(keys, str):
+            raise ValueError("Keys must be a sequence of strings. To rename a single key, use the `rename` method.")
+
         transform = Concatenate(keys, into=into, axis=axis)
         self.transforms.append(transform)
         return self
@@ -124,12 +136,15 @@ class DataAdapter:
 
     def constrain(
         self,
-        keys: Sequence[str],
+        keys: str | Sequence[str],
         *,
         lower: int | float | np.ndarray = None,
         upper: int | float | np.ndarray = None,
         method: str,
     ):
+        if isinstance(keys, str):
+            keys = [keys]
+
         transform = MapTransform(
             transform_map={key: Constrain(lower=lower, upper=upper, method=method) for key in keys}
         )
@@ -137,6 +152,9 @@ class DataAdapter:
         return self
 
     def drop(self, keys: str | Sequence[str]):
+        if isinstance(keys, str):
+            keys = [keys]
+
         transform = Drop(keys)
         self.transforms.append(transform)
         return self
