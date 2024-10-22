@@ -16,7 +16,7 @@ class CompositeSimulator(Simulator):
 
     def sample(self, batch_shape: Shape, **kwargs) -> dict[str, np.ndarray]:
         batch_shape = validate_batch_shape(batch_shape)
-        
+
         data = {}
         for simulator in self.simulators:
             data |= simulator.sample(batch_shape, **(kwargs | data))
