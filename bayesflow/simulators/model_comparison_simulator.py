@@ -7,7 +7,7 @@ from bayesflow.utils import tree_stack
 from bayesflow.utils import numpy_utils as npu
 
 from .simulator import Simulator
-from .validate_batch_shape import validate_batch_shape
+from bayesflow.utils import validate_batch_shape
 
 
 class ModelComparisonSimulator(Simulator):

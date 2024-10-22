@@ -2,9 +2,9 @@ from collections.abc import Sequence
 import numpy as np
 
 from bayesflow.types import Shape
+from bayesflow.utils import validate_batch_shape
 
 from .simulator import Simulator
-from .validate_batch_shape import validate_batch_shape
 
 
 class CompositeSimulator(Simulator):

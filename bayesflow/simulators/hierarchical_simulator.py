@@ -5,7 +5,7 @@ import numpy as np
 from bayesflow.types import Shape
 
 from .simulator import Simulator
-from .validate_batch_shape import validate_batch_shape
+from bayesflow.utils import validate_batch_shape
 
 
 class HierarchicalSimulator(Simulator):
