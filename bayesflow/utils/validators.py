@@ -1,8 +1,11 @@
-from bayesflow.types import Shape
+from bayesflow.types import Shape, ShapeLike
 
 
-def validate_batch_shape(batch_shape: Shape) -> tuple:
-    if isinstance(batch_shape, int):
-        batch_shape = (batch_shape,)
+def validate_shape(shape: ShapeLike) -> Shape:
+    if isinstance(shape, int):
+        return (shape,)
 
-    return batch_shape
+    if not isinstance(shape, tuple) or not all(isinstance(dim, int) for dim in shape):
+        raise ValueError(f"Invalid shape: {shape}")
+
+    return shape

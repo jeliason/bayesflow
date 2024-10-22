@@ -36,7 +36,7 @@ from .dispatch import find_distribution, find_network, find_permutation, find_po
 
 from .optimal_transport import optimal_transport
 
-from .validators import validate_batch_shape
+from .validators import validate_shape
 
 from .tensor_utils import (
     expand_left,

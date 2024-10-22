@@ -1,8 +1,8 @@
 from collections.abc import Sequence
 import numpy as np
 
-from bayesflow.types import Shape
-from bayesflow.utils import validate_batch_shape
+from bayesflow.types import ShapeLike
+from bayesflow.utils import validate_shape
 
 from .simulator import Simulator
 
@@ -14,8 +14,8 @@ class CompositeSimulator(Simulator):
         self.simulators = simulators
         self.expand_outputs = expand_outputs
 
-    def sample(self, batch_shape: Shape, **kwargs) -> dict[str, np.ndarray]:
-        batch_shape = validate_batch_shape(batch_shape)
+    def sample(self, batch_shape: ShapeLike, **kwargs) -> dict[str, np.ndarray]:
+        batch_shape = validate_shape(batch_shape)
 
         data = {}
         for simulator in self.simulators:
