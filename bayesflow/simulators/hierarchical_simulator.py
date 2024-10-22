@@ -5,6 +5,7 @@ import numpy as np
 from bayesflow.types import Shape
 
 from .simulator import Simulator
+from .validate_batch_shape import validate_batch_shape
 
 
 class HierarchicalSimulator(Simulator):
@@ -12,6 +13,8 @@ class HierarchicalSimulator(Simulator):
         self.hierarchy = hierarchy
 
     def sample(self, batch_shape: Shape, **kwargs) -> dict[str, np.ndarray]:
+        batch_shape = validate_batch_shape(batch_shape)
+
         input_data = {}
         output_data = {}
 

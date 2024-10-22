@@ -4,6 +4,7 @@ import numpy as np
 from bayesflow.utils import batched_call, filter_kwargs, tree_stack
 
 from .simulator import Simulator
+from .validate_batch_shape import validate_batch_shape
 from ..types import Shape
 
 
@@ -43,6 +44,7 @@ class LambdaSimulator(Simulator):
         self.reserved_arguments = reserved_arguments
 
     def sample(self, batch_shape: Shape, **kwargs) -> dict[str, np.ndarray]:
+        batch_shape = validate_batch_shape(batch_shape)
         # add reserved arguments
         kwargs = self.reserved_arguments | kwargs
 
