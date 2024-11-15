@@ -10,7 +10,7 @@ from bayesflow.data_adapters import ConcatenateKeysDataAdapter, DataAdapter
 from bayesflow.data_adapters.transforms import Standardize, Transform
 from bayesflow.networks import InferenceNetwork, SummaryNetwork
 from bayesflow.types import Shape, Tensor
-from bayesflow.utils import logging, expand_tile
+from bayesflow.utils import expand_tile, filter_kwargs, logging
 
 from .approximator import Approximator
 
@@ -132,6 +132,7 @@ class ContinuousApproximator(Approximator):
         conditions: Mapping[str, Tensor],
         num_samples: int = None,
         batch_shape: Shape = None,
+        **kwargs,
     ) -> dict[str, Tensor]:
         if num_samples is None and batch_shape is None:
             num_samples = 1
@@ -141,7 +142,7 @@ class ContinuousApproximator(Approximator):
         conditions = self.data_adapter.configure(conditions)
         conditions = keras.tree.map_structure(keras.ops.convert_to_tensor, conditions)
         conditions = {
-            "inference_variables": self._sample(num_samples=num_samples, batch_shape=batch_shape, **conditions)
+            "inference_variables": self._sample(num_samples=num_samples, batch_shape=batch_shape, **conditions, **kwargs)
         }
         conditions = keras.tree.map_structure(keras.ops.convert_to_numpy, conditions)
         conditions = self.data_adapter.deconfigure(conditions)
@@ -154,6 +155,7 @@ class ContinuousApproximator(Approximator):
         batch_shape: Shape = None,
         inference_conditions: Tensor = None,
         summary_variables: Tensor = None,
+        **kwargs,
     ) -> Tensor:
         if self.summary_network is not None:
             summary_outputs = self.summary_network(summary_variables)
@@ -170,11 +172,11 @@ class ContinuousApproximator(Approximator):
             else:
                 batch_shape = (num_samples,)
 
-        return self.inference_network.sample(batch_shape, conditions=inference_conditions)
+        return self.inference_network.sample(batch_shape, conditions=inference_conditions, **kwargs)
 
-    def log_prob(self, data: Mapping[str, Tensor], numpy: bool = True) -> Tensor:
+    def log_prob(self, data: Mapping[str, Tensor], *, numpy: bool = True, **kwargs) -> Tensor:
         data = self.data_adapter.configure(data)
-        log_prob = self._log_prob(**data)
+        log_prob = self._log_prob(**data, **kwargs)
 
         if numpy:
             log_prob = keras.ops.convert_to_numpy(log_prob)
@@ -182,14 +184,16 @@ class ContinuousApproximator(Approximator):
         return log_prob
 
     def _log_prob(
-        self, inference_variables: Tensor, inference_conditions: Tensor = None, summary_variables: Tensor = None
+        self, inference_variables: Tensor, inference_conditions: Tensor = None, summary_variables: Tensor = None, **kwargs
     ) -> Tensor:
         if self.summary_network is not None:
-            summary_outputs = self.summary_network(summary_variables)
+            summary_kwargs = filter_kwargs(kwargs, self.summary_network.call)
+            summary_outputs = self.summary_network(summary_variables, **summary_kwargs)
 
             if inference_conditions is None:
                 inference_conditions = summary_outputs
             else:
                 inference_conditions = keras.ops.concatenate([inference_conditions, summary_outputs], axis=-1)
 
-        return self.inference_network.log_prob(inference_variables, conditions=inference_conditions)
+        inference_kwargs = filter_kwargs(kwargs, self.inference_network.call)
+        return self.inference_network.log_prob(inference_variables, conditions=inference_conditions, **inference_kwargs)

@@ -4,6 +4,10 @@ from bayesflow.utils import keras_kwargs, expand_right_as, tile_axis
 
 
 class Integrator:
+    def __init__(self, ):
+
+
+class Integrator:
     def __init__(self, **kwargs):
         super().__init__(**keras_kwargs(kwargs))
 
@@ -26,3 +30,11 @@ class Integrator:
             xtc = keras.ops.concatenate([x, t, conditions], axis=-1)
 
         return projector(network(xtc, **kwargs))
+
+
+
+x, jac, ... = integrate(dfdx, x0, t0, t1, step_size="dynamic", method="rk45")
+
+
+integrator = RK45Integrator(fn, step_size="dynamic")
+

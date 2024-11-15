@@ -1,8 +1,21 @@
 from collections.abc import Callable, Mapping, Sequence
+from functools import wraps
 import keras
 import numpy as np
 
 from bayesflow.types import Shape
+
+
+def allow_args(decorator: callable) -> callable:
+    """ Allow a decorator to be called with or without arguments. """
+    @wraps(decorator)
+    def wrapper(*args, **kwargs):
+        if not kwargs and len(args) == 1 and callable(args[0]):
+            return decorator(args[0])
+
+        return lambda fn: decorator(fn, *args, **kwargs)
+
+    return wrapper
 
 
 def batched_call(

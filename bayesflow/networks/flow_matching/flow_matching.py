@@ -29,7 +29,7 @@ class FlowMatching(InferenceNetwork):
         optimal_transport_kwargs: dict[str, any] = None,
         **kwargs,
     ):
-        super().__init__(base_distribution=base_distribution, **keras_kwargs(kwargs))
+        super().__init__(base_distribution=base_distribution, **kwargs)
 
         self.use_optimal_transport = use_optimal_transport
         self.optimal_transport_kwargs = optimal_transport_kwargs or {

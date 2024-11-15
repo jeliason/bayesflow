@@ -7,7 +7,7 @@ from bayesflow.utils import find_distribution
 class InferenceNetwork(keras.Layer):
     def __init__(self, base_distribution: str = "normal", **kwargs):
         super().__init__(**kwargs)
-        self.base_distribution = find_distribution(base_distribution)
+        self.base_distribution = find_distribution(base_distribution, **kwargs.get("base_distribution_kwargs", {}))
 
     def build(self, xz_shape: Shape, conditions_shape: Shape = None) -> None:
         self.base_distribution.build(xz_shape)
