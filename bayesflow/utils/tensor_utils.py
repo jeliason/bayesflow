@@ -140,3 +140,23 @@ def tree_stack(structures: Sequence[T], axis: int = 0, numpy: bool = None) -> T:
             return keras.ops.stack(items, axis=axis)
 
     return keras.tree.map_structure(stack, *structures)
+
+
+def searchsorted(sorted_sequence: Tensor, values: Tensor) -> Tensor:
+    """Compute the dot product between the Jacobian of the given function at the point given by
+    the input (primals) and vectors in tangents."""
+
+    match keras.backend.backend():
+        case "torch":
+            import torch
+
+            return torch.searchsorted(sorted_sequence, values)
+        case "tensorflow":
+            import tensorflow as tf
+
+            return tf.searchsorted(sorted_sequence, values)
+        case "jax":
+            raise NotImplementedError("N-D searchsorted not implemented for JAX")
+
+        case _:
+            raise NotImplementedError(f"JVP not implemented for backend {keras.backend.backend()}")

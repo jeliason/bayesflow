@@ -40,6 +40,7 @@ from .tensor_utils import (
     tree_concatenate,
     concatenate,
     tree_stack,
+    searchsorted,
 )
 from .validators import check_lengths_same
 from .comp_utils import expected_calibration_error
