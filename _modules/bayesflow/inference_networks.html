@@ -15,30 +15,33 @@
     document.documentElement.dataset.mode = localStorage.getItem("mode") || "";
     document.documentElement.dataset.theme = localStorage.getItem("theme") || "";
   </script>
+  <!--
+    this give us a css class that will be invisible only if js is disabled
+  -->
+  <noscript>
+    <style>
+      .pst-js-only { display: none !important; }
+
+    </style>
+  </noscript>
   
   <!-- Loaded before other Sphinx assets -->
-  <link href="../../_static/styles/theme.css?digest=dfe6caa3a7d634c4db9b" rel="stylesheet" />
-<link href="../../_static/styles/bootstrap.css?digest=dfe6caa3a7d634c4db9b" rel="stylesheet" />
-<link href="../../_static/styles/pydata-sphinx-theme.css?digest=dfe6caa3a7d634c4db9b" rel="stylesheet" />
+  <link href="../../_static/styles/theme.css?digest=8878045cc6db502f8baf" rel="stylesheet" />
+<link href="../../_static/styles/pydata-sphinx-theme.css?digest=8878045cc6db502f8baf" rel="stylesheet" />
 
-  
-  <link href="../../_static/vendor/fontawesome/6.5.2/css/all.min.css?digest=dfe6caa3a7d634c4db9b" rel="stylesheet" />
-  <link rel="preload" as="font" type="font/woff2" crossorigin href="../../_static/vendor/fontawesome/6.5.2/webfonts/fa-solid-900.woff2" />
-<link rel="preload" as="font" type="font/woff2" crossorigin href="../../_static/vendor/fontawesome/6.5.2/webfonts/fa-brands-400.woff2" />
-<link rel="preload" as="font" type="font/woff2" crossorigin href="../../_static/vendor/fontawesome/6.5.2/webfonts/fa-regular-400.woff2" />
-
-    <link rel="stylesheet" type="text/css" href="../../_static/pygments.css?v=a746c00c" />
+    <link rel="stylesheet" type="text/css" href="../../_static/pygments.css?v=8f2a1f02" />
     <link rel="stylesheet" type="text/css" href="../../_static/styles/sphinx-book-theme.css?v=a3416100" />
     <link rel="stylesheet" type="text/css" href="../../_static/mystnb.4510f1fc1dee50b3e5859aac5469c37c29e427902b24a333a5f9fcb2f0b3ac41.css" />
     <link rel="stylesheet" type="text/css" href="../../_static/sphinx-design.min.css?v=95c83b7e" />
   
+  <!-- So that users can add custom icons -->
+  <script src="../../_static/scripts/fontawesome.js?digest=8878045cc6db502f8baf"></script>
   <!-- Pre-loaded scripts that we'll load fully later -->
-  <link rel="preload" as="script" href="../../_static/scripts/bootstrap.js?digest=dfe6caa3a7d634c4db9b" />
-<link rel="preload" as="script" href="../../_static/scripts/pydata-sphinx-theme.js?digest=dfe6caa3a7d634c4db9b" />
-  <script src="../../_static/vendor/fontawesome/6.5.2/js/all.min.js?digest=dfe6caa3a7d634c4db9b"></script>
+  <link rel="preload" as="script" href="../../_static/scripts/bootstrap.js?digest=8878045cc6db502f8baf" />
+<link rel="preload" as="script" href="../../_static/scripts/pydata-sphinx-theme.js?digest=8878045cc6db502f8baf" />
 
     <script src="../../_static/documentation_options.js?v=9eb32ce0"></script>
-    <script src="../../_static/doctools.js?v=9a2dae69"></script>
+    <script src="../../_static/doctools.js?v=9bcbadda"></script>
     <script src="../../_static/sphinx_highlight.js?v=dc90522c"></script>
     <script src="../../_static/scripts/sphinx-book-theme.js?v=887ef09a"></script>
     <script src="../../_static/design-tabs.js?v=f930bc37"></script>
@@ -51,6 +54,7 @@
     <link rel="search" title="Search" href="../../search.html" />
   <meta name="viewport" content="width=device-width, initial-scale=1"/>
   <meta name="docsearch:language" content="en"/>
+  <meta name="docsearch:version" content="" />
   </head>
   
   
@@ -66,19 +70,8 @@
     <i class="fa-solid fa-arrow-up"></i>Back to top</button>
 
   
-  <input type="checkbox"
-          class="sidebar-toggle"
-          id="pst-primary-sidebar-checkbox"/>
-  <label class="overlay overlay-primary" for="pst-primary-sidebar-checkbox"></label>
-  
-  <input type="checkbox"
-          class="sidebar-toggle"
-          id="pst-secondary-sidebar-checkbox"/>
-  <label class="overlay overlay-secondary" for="pst-secondary-sidebar-checkbox"></label>
-  
-  <div class="search-button__wrapper">
-    <div class="search-button__overlay"></div>
-    <div class="search-button__search-container">
+  <dialog id="pst-search-dialog">
+    
 <form class="bd-search d-flex align-items-center"
       action="../../search.html"
       method="get">
@@ -86,7 +79,6 @@
   <input type="search"
          class="form-control"
          name="q"
-         id="search-input"
          placeholder="Search..."
          aria-label="Search..."
          autocomplete="off"
@@ -94,8 +86,8 @@
          autocapitalize="off"
          spellcheck="false"/>
   <span class="search-button__kbd-shortcut"><kbd class="kbd-shortcut__modifier">Ctrl</kbd>+<kbd>K</kbd></span>
-</form></div>
-  </div>
+</form>
+  </dialog>
 
   <div class="pst-async-banner-revealer d-none">
   <aside id="bd-header-version-warning" class="d-none d-print-none" aria-label="Version warning"></aside>
@@ -113,7 +105,8 @@
       
         
       
-      <div class="bd-sidebar-primary bd-sidebar">
+      <dialog id="pst-primary-sidebar-modal"></dialog>
+      <div id="pst-primary-sidebar" class="bd-sidebar-primary bd-sidebar">
         
 
   
@@ -143,21 +136,17 @@
     
     
     <img src="../../_static/bayesflow_hex.png" class="logo__image only-light" alt="BayesFlow: Amortized Bayesian Inference - Home"/>
-    <script>document.write(`<img src="../../_static/bayesflow_hex.png" class="logo__image only-dark" alt="BayesFlow: Amortized Bayesian Inference - Home"/>`);</script>
+    <img src="../../_static/bayesflow_hex.png" class="logo__image only-dark pst-js-only" alt="BayesFlow: Amortized Bayesian Inference - Home"/>
   
   
 </a></div>
         <div class="sidebar-primary-item">
 
- <script>
- document.write(`
-   <button class="btn search-button-field search-button__button" title="Search" aria-label="Search" data-bs-placement="bottom" data-bs-toggle="tooltip">
-    <i class="fa-solid fa-magnifying-glass"></i>
-    <span class="search-button__default-text">Search</span>
-    <span class="search-button__kbd-shortcut"><kbd class="kbd-shortcut__modifier">Ctrl</kbd>+<kbd class="kbd-shortcut__modifier">K</kbd></span>
-   </button>
- `);
- </script></div>
+<button class="btn search-button-field search-button__button pst-js-only" title="Search" aria-label="Search" data-bs-placement="bottom" data-bs-toggle="tooltip">
+ <i class="fa-solid fa-magnifying-glass"></i>
+ <span class="search-button__default-text">Search</span>
+ <span class="search-button__kbd-shortcut"><kbd class="kbd-shortcut__modifier">Ctrl</kbd>+<kbd class="kbd-shortcut__modifier">K</kbd></span>
+</button></div>
         <div class="sidebar-primary-item"><nav class="bd-links bd-docs-nav" aria-label="Main">
     <div class="bd-toc-item navbar-nav active">
         <ul class="nav bd-sidenav">
@@ -226,9 +215,14 @@
   
   
   <div class="sidebar-primary-items__end sidebar-primary__section">
+      <div class="sidebar-primary-item">
+<div id="ethical-ad-placement"
+      class="flat"
+      data-ea-publisher="readthedocs"
+      data-ea-type="readthedocs-sidebar"
+      data-ea-manual="true">
+</div></div>
   </div>
-  
-  <div id="rtd-footer-container"></div>
 
 
       </div>
@@ -324,24 +318,16 @@
 
 
 
-<script>
-document.write(`
-  <button class="btn btn-sm nav-link pst-navbar-icon theme-switch-button" title="light/dark" aria-label="light/dark" data-bs-placement="bottom" data-bs-toggle="tooltip">
-    <i class="theme-switch fa-solid fa-sun fa-lg" data-mode="light"></i>
-    <i class="theme-switch fa-solid fa-moon fa-lg" data-mode="dark"></i>
-    <i class="theme-switch fa-solid fa-circle-half-stroke fa-lg" data-mode="auto"></i>
-  </button>
-`);
-</script>
+<button class="btn btn-sm nav-link pst-navbar-icon theme-switch-button pst-js-only" aria-label="Color mode" data-bs-title="Color mode"  data-bs-placement="bottom" data-bs-toggle="tooltip">
+  <i class="theme-switch fa-solid fa-sun                fa-lg" data-mode="light" title="Light"></i>
+  <i class="theme-switch fa-solid fa-moon               fa-lg" data-mode="dark"  title="Dark"></i>
+  <i class="theme-switch fa-solid fa-circle-half-stroke fa-lg" data-mode="auto"  title="System Settings"></i>
+</button>
 
 
-<script>
-document.write(`
-  <button class="btn btn-sm pst-navbar-icon search-button search-button__button" title="Search" aria-label="Search" data-bs-placement="bottom" data-bs-toggle="tooltip">
+<button class="btn btn-sm pst-navbar-icon search-button search-button__button pst-js-only" title="Search" aria-label="Search" data-bs-placement="bottom" data-bs-toggle="tooltip">
     <i class="fa-solid fa-magnifying-glass fa-lg"></i>
-  </button>
-`);
-</script>
+</button>
 
 </div></div>
       
@@ -388,25 +374,25 @@ document.write(`
 <span class="c1"># OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE</span>
 <span class="c1"># SOFTWARE.</span>
 
-<span class="kn">import</span> <span class="nn">numpy</span> <span class="k">as</span> <span class="nn">np</span>
-<span class="kn">import</span> <span class="nn">tensorflow</span> <span class="k">as</span> <span class="nn">tf</span>
+<span class="kn">import</span><span class="w"> </span><span class="nn">numpy</span><span class="w"> </span><span class="k">as</span><span class="w"> </span><span class="nn">np</span>
+<span class="kn">import</span><span class="w"> </span><span class="nn">tensorflow</span><span class="w"> </span><span class="k">as</span><span class="w"> </span><span class="nn">tf</span>
 
-<span class="kn">from</span> <span class="nn">bayesflow</span> <span class="kn">import</span> <span class="n">default_settings</span>
-<span class="kn">from</span> <span class="nn">bayesflow.coupling_networks</span> <span class="kn">import</span> <span class="n">CouplingLayer</span>
-<span class="kn">from</span> <span class="nn">bayesflow.helper_functions</span> <span class="kn">import</span> <span class="n">build_meta_dict</span>
-<span class="kn">from</span> <span class="nn">bayesflow.helper_networks</span> <span class="kn">import</span> <span class="n">MCDropout</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">bayesflow</span><span class="w"> </span><span class="kn">import</span> <span class="n">default_settings</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">bayesflow.coupling_networks</span><span class="w"> </span><span class="kn">import</span> <span class="n">CouplingLayer</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">bayesflow.helper_functions</span><span class="w"> </span><span class="kn">import</span> <span class="n">build_meta_dict</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">bayesflow.helper_networks</span><span class="w"> </span><span class="kn">import</span> <span class="n">MCDropout</span>
 
 
 <div class="viewcode-block" id="InvertibleNetwork">
 <a class="viewcode-back" href="../../api/bayesflow.inference_networks.html#bayesflow.inference_networks.InvertibleNetwork">[docs]</a>
-<span class="k">class</span> <span class="nc">InvertibleNetwork</span><span class="p">(</span><span class="n">tf</span><span class="o">.</span><span class="n">keras</span><span class="o">.</span><span class="n">Model</span><span class="p">):</span>
+<span class="k">class</span><span class="w"> </span><span class="nc">InvertibleNetwork</span><span class="p">(</span><span class="n">tf</span><span class="o">.</span><span class="n">keras</span><span class="o">.</span><span class="n">Model</span><span class="p">):</span>
 <span class="w">    </span><span class="sd">&quot;&quot;&quot;Implements a chain of conditional invertible coupling layers for conditional density estimation.&quot;&quot;&quot;</span>
 
     <span class="n">available_designs</span> <span class="o">=</span> <span class="p">(</span><span class="s2">&quot;affine&quot;</span><span class="p">,</span> <span class="s2">&quot;spline&quot;</span><span class="p">,</span> <span class="s2">&quot;interleaved&quot;</span><span class="p">)</span>
 
 <div class="viewcode-block" id="InvertibleNetwork.__init__">
 <a class="viewcode-back" href="../../api/bayesflow.inference_networks.html#bayesflow.inference_networks.InvertibleNetwork.__init__">[docs]</a>
-    <span class="k">def</span> <span class="fm">__init__</span><span class="p">(</span>
+    <span class="k">def</span><span class="w"> </span><span class="fm">__init__</span><span class="p">(</span>
         <span class="bp">self</span><span class="p">,</span>
         <span class="n">num_params</span><span class="p">,</span>
         <span class="n">num_coupling_layers</span><span class="o">=</span><span class="mi">6</span><span class="p">,</span>
@@ -523,7 +509,7 @@ document.write(`
 
 <div class="viewcode-block" id="InvertibleNetwork.call">
 <a class="viewcode-back" href="../../api/bayesflow.inference_networks.html#bayesflow.inference_networks.InvertibleNetwork.call">[docs]</a>
-    <span class="k">def</span> <span class="nf">call</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">targets</span><span class="p">,</span> <span class="n">condition</span><span class="p">,</span> <span class="n">inverse</span><span class="o">=</span><span class="kc">False</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">):</span>
+    <span class="k">def</span><span class="w"> </span><span class="nf">call</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">targets</span><span class="p">,</span> <span class="n">condition</span><span class="p">,</span> <span class="n">inverse</span><span class="o">=</span><span class="kc">False</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">):</span>
 <span class="w">        </span><span class="sd">&quot;&quot;&quot;Performs one pass through an invertible chain (either inverse or forward).</span>
 
 <span class="sd">        Parameters</span>
@@ -557,7 +543,7 @@ document.write(`
 
 <div class="viewcode-block" id="InvertibleNetwork.forward">
 <a class="viewcode-back" href="../../api/bayesflow.inference_networks.html#bayesflow.inference_networks.InvertibleNetwork.forward">[docs]</a>
-    <span class="k">def</span> <span class="nf">forward</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">targets</span><span class="p">,</span> <span class="n">condition</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">):</span>
+    <span class="k">def</span><span class="w"> </span><span class="nf">forward</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">targets</span><span class="p">,</span> <span class="n">condition</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">):</span>
 <span class="w">        </span><span class="sd">&quot;&quot;&quot;Performs a forward pass through the chain.&quot;&quot;&quot;</span>
 
         <span class="c1"># Add noise to target if using SoftFlow, use explicitly</span>
@@ -602,7 +588,7 @@ document.write(`
 
 <div class="viewcode-block" id="InvertibleNetwork.inverse">
 <a class="viewcode-back" href="../../api/bayesflow.inference_networks.html#bayesflow.inference_networks.InvertibleNetwork.inverse">[docs]</a>
-    <span class="k">def</span> <span class="nf">inverse</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">z</span><span class="p">,</span> <span class="n">condition</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">):</span>
+    <span class="k">def</span><span class="w"> </span><span class="nf">inverse</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">z</span><span class="p">,</span> <span class="n">condition</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">):</span>
 <span class="w">        </span><span class="sd">&quot;&quot;&quot;Performs a reverse pass through the chain. Assumes that it is only used</span>
 <span class="sd">        in inference mode, so ``**kwargs`` contains ``training=False``.&quot;&quot;&quot;</span>
 
@@ -625,7 +611,7 @@ document.write(`
 
 
     <span class="nd">@staticmethod</span>
-    <span class="k">def</span> <span class="nf">_create_coupling_layers</span><span class="p">(</span><span class="n">settings</span><span class="p">,</span> <span class="n">coupling_settings</span><span class="p">,</span> <span class="n">coupling_design</span><span class="p">,</span> <span class="n">num_coupling_layers</span><span class="p">):</span>
+    <span class="k">def</span><span class="w"> </span><span class="nf">_create_coupling_layers</span><span class="p">(</span><span class="n">settings</span><span class="p">,</span> <span class="n">coupling_settings</span><span class="p">,</span> <span class="n">coupling_design</span><span class="p">,</span> <span class="n">num_coupling_layers</span><span class="p">):</span>
 <span class="w">        </span><span class="sd">&quot;&quot;&quot;Helper method to create a list of coupling layers. Takes care</span>
 <span class="sd">        of the different options for coupling design.</span>
 <span class="sd">        &quot;&quot;&quot;</span>
@@ -655,7 +641,7 @@ document.write(`
 <div class="viewcode-block" id="InvertibleNetwork.create_config">
 <a class="viewcode-back" href="../../api/bayesflow.inference_networks.html#bayesflow.inference_networks.InvertibleNetwork.create_config">[docs]</a>
     <span class="nd">@classmethod</span>
-    <span class="k">def</span> <span class="nf">create_config</span><span class="p">(</span><span class="bp">cls</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">):</span>
+    <span class="k">def</span><span class="w"> </span><span class="nf">create_config</span><span class="p">(</span><span class="bp">cls</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">):</span>
 <span class="w">        </span><span class="sd">&quot;&quot;&quot; &quot;Used to create the settings dictionary for the internal networks of the invertible</span>
 <span class="sd">        network. Will fill in missing&quot;&quot;&quot;</span>
 
@@ -667,7 +653,7 @@ document.write(`
 
 <div class="viewcode-block" id="EvidentialNetwork">
 <a class="viewcode-back" href="../../api/bayesflow.inference_networks.html#bayesflow.inference_networks.EvidentialNetwork">[docs]</a>
-<span class="k">class</span> <span class="nc">EvidentialNetwork</span><span class="p">(</span><span class="n">tf</span><span class="o">.</span><span class="n">keras</span><span class="o">.</span><span class="n">Model</span><span class="p">):</span>
+<span class="k">class</span><span class="w"> </span><span class="nc">EvidentialNetwork</span><span class="p">(</span><span class="n">tf</span><span class="o">.</span><span class="n">keras</span><span class="o">.</span><span class="n">Model</span><span class="p">):</span>
 <span class="w">    </span><span class="sd">&quot;&quot;&quot;Implements a network whose outputs are the concentration parameters of a Dirichlet density.</span>
 
 <span class="sd">    Follows ideas from:</span>
@@ -683,7 +669,7 @@ document.write(`
 
 <div class="viewcode-block" id="EvidentialNetwork.__init__">
 <a class="viewcode-back" href="../../api/bayesflow.inference_networks.html#bayesflow.inference_networks.EvidentialNetwork.__init__">[docs]</a>
-    <span class="k">def</span> <span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">num_models</span><span class="p">,</span> <span class="n">dense_args</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">num_dense</span><span class="o">=</span><span class="mi">3</span><span class="p">,</span> <span class="n">output_activation</span><span class="o">=</span><span class="s2">&quot;softplus&quot;</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">):</span>
+    <span class="k">def</span><span class="w"> </span><span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">num_models</span><span class="p">,</span> <span class="n">dense_args</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">num_dense</span><span class="o">=</span><span class="mi">3</span><span class="p">,</span> <span class="n">output_activation</span><span class="o">=</span><span class="s2">&quot;softplus&quot;</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">):</span>
 <span class="w">        </span><span class="sd">&quot;&quot;&quot;Creates an instance of an evidential network for amortized model comparison.</span>
 
 <span class="sd">        Parameters</span>
@@ -721,7 +707,7 @@ document.write(`
 
 <div class="viewcode-block" id="EvidentialNetwork.call">
 <a class="viewcode-back" href="../../api/bayesflow.inference_networks.html#bayesflow.inference_networks.EvidentialNetwork.call">[docs]</a>
-    <span class="k">def</span> <span class="nf">call</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">condition</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">):</span>
+    <span class="k">def</span><span class="w"> </span><span class="nf">call</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">condition</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">):</span>
 <span class="w">        </span><span class="sd">&quot;&quot;&quot;Computes evidences for model comparison given a batch of data and optional concatenated context,</span>
 <span class="sd">        typically passed through a summayr network.</span>
 
@@ -741,7 +727,7 @@ document.write(`
 <div class="viewcode-block" id="EvidentialNetwork.evidence">
 <a class="viewcode-back" href="../../api/bayesflow.inference_networks.html#bayesflow.inference_networks.EvidentialNetwork.evidence">[docs]</a>
     <span class="nd">@tf</span><span class="o">.</span><span class="n">function</span>
-    <span class="k">def</span> <span class="nf">evidence</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">condition</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">):</span>
+    <span class="k">def</span><span class="w"> </span><span class="nf">evidence</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">condition</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">):</span>
         <span class="n">rep</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">dense</span><span class="p">(</span><span class="n">condition</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">)</span>
         <span class="n">alpha</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">alpha_layer</span><span class="p">(</span><span class="n">rep</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">)</span>
         <span class="n">evidence</span> <span class="o">=</span> <span class="n">alpha</span> <span class="o">+</span> <span class="mf">1.0</span>
@@ -750,7 +736,7 @@ document.write(`
 
 <div class="viewcode-block" id="EvidentialNetwork.sample">
 <a class="viewcode-back" href="../../api/bayesflow.inference_networks.html#bayesflow.inference_networks.EvidentialNetwork.sample">[docs]</a>
-    <span class="k">def</span> <span class="nf">sample</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">condition</span><span class="p">,</span> <span class="n">n_samples</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">):</span>
+    <span class="k">def</span><span class="w"> </span><span class="nf">sample</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">condition</span><span class="p">,</span> <span class="n">n_samples</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">):</span>
 <span class="w">        </span><span class="sd">&quot;&quot;&quot;Samples posterior model probabilities from the higher-order Dirichlet density.</span>
 
 <span class="sd">        Parameters</span>
@@ -777,7 +763,7 @@ document.write(`
 <div class="viewcode-block" id="EvidentialNetwork.create_config">
 <a class="viewcode-back" href="../../api/bayesflow.inference_networks.html#bayesflow.inference_networks.EvidentialNetwork.create_config">[docs]</a>
     <span class="nd">@classmethod</span>
-    <span class="k">def</span> <span class="nf">create_config</span><span class="p">(</span><span class="bp">cls</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">):</span>
+    <span class="k">def</span><span class="w"> </span><span class="nf">create_config</span><span class="p">(</span><span class="bp">cls</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">):</span>
 <span class="w">        </span><span class="sd">&quot;&quot;&quot; &quot;Used to create the settings dictionary for the internal networks of the invertible</span>
 <span class="sd">        network. Will fill in missing&quot;&quot;&quot;</span>
 
@@ -789,7 +775,7 @@ document.write(`
 
 <div class="viewcode-block" id="PMPNetwork">
 <a class="viewcode-back" href="../../api/bayesflow.inference_networks.html#bayesflow.inference_networks.PMPNetwork">[docs]</a>
-<span class="k">class</span> <span class="nc">PMPNetwork</span><span class="p">(</span><span class="n">tf</span><span class="o">.</span><span class="n">keras</span><span class="o">.</span><span class="n">Model</span><span class="p">):</span>
+<span class="k">class</span><span class="w"> </span><span class="nc">PMPNetwork</span><span class="p">(</span><span class="n">tf</span><span class="o">.</span><span class="n">keras</span><span class="o">.</span><span class="n">Model</span><span class="p">):</span>
 <span class="w">    </span><span class="sd">&quot;&quot;&quot;Implements a network that approximates posterior model probabilities (PMPs) as employed in [1].</span>
 
 <span class="sd">    [1] Elsemüller, L., Schnuerch, M., Bürkner, P. C., &amp; Radev, S. T. (2023).</span>
@@ -799,7 +785,7 @@ document.write(`
 
 <div class="viewcode-block" id="PMPNetwork.__init__">
 <a class="viewcode-back" href="../../api/bayesflow.inference_networks.html#bayesflow.inference_networks.PMPNetwork.__init__">[docs]</a>
-    <span class="k">def</span> <span class="fm">__init__</span><span class="p">(</span>
+    <span class="k">def</span><span class="w"> </span><span class="fm">__init__</span><span class="p">(</span>
         <span class="bp">self</span><span class="p">,</span>
         <span class="n">num_models</span><span class="p">,</span>
         <span class="n">dense_args</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span>
@@ -856,7 +842,7 @@ document.write(`
 
 <div class="viewcode-block" id="PMPNetwork.call">
 <a class="viewcode-back" href="../../api/bayesflow.inference_networks.html#bayesflow.inference_networks.PMPNetwork.call">[docs]</a>
-    <span class="k">def</span> <span class="nf">call</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">condition</span><span class="p">,</span> <span class="n">return_probs</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">):</span>
+    <span class="k">def</span><span class="w"> </span><span class="nf">call</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">condition</span><span class="p">,</span> <span class="n">return_probs</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">):</span>
 <span class="w">        </span><span class="sd">&quot;&quot;&quot;Forward pass through the network. Computes approximated PMPs given a batch of data</span>
 <span class="sd">        and optional concatenated context, typically passed through a summary network.</span>
 
@@ -882,7 +868,7 @@ document.write(`
 
 <div class="viewcode-block" id="PMPNetwork.posterior_probs">
 <a class="viewcode-back" href="../../api/bayesflow.inference_networks.html#bayesflow.inference_networks.PMPNetwork.posterior_probs">[docs]</a>
-    <span class="k">def</span> <span class="nf">posterior_probs</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">condition</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">):</span>
+    <span class="k">def</span><span class="w"> </span><span class="nf">posterior_probs</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">condition</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">):</span>
 <span class="w">        </span><span class="sd">&quot;&quot;&quot;Shortcut function to obtain posterior probabilities given a</span>
 <span class="sd">        condition tensor (e.g., summary statistics of data sets).</span>
 
@@ -902,7 +888,7 @@ document.write(`
 
 <div class="viewcode-block" id="PMPNetwork.logits">
 <a class="viewcode-back" href="../../api/bayesflow.inference_networks.html#bayesflow.inference_networks.PMPNetwork.logits">[docs]</a>
-    <span class="k">def</span> <span class="nf">logits</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">condition</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">):</span>
+    <span class="k">def</span><span class="w"> </span><span class="nf">logits</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">condition</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">):</span>
 <span class="w">        </span><span class="sd">&quot;&quot;&quot;Shortcut function to obtain logits given a condition tensor</span>
 <span class="sd">        (e.g., summary statistics of data sets).</span>
 
@@ -923,7 +909,7 @@ document.write(`
 <div class="viewcode-block" id="PMPNetwork.create_config">
 <a class="viewcode-back" href="../../api/bayesflow.inference_networks.html#bayesflow.inference_networks.PMPNetwork.create_config">[docs]</a>
     <span class="nd">@classmethod</span>
-    <span class="k">def</span> <span class="nf">create_config</span><span class="p">(</span><span class="bp">cls</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">):</span>
+    <span class="k">def</span><span class="w"> </span><span class="nf">create_config</span><span class="p">(</span><span class="bp">cls</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">):</span>
 <span class="w">        </span><span class="sd">&quot;&quot;&quot;Used to create the settings dictionary for the internal networks of the</span>
 <span class="sd">        network. Will fill in missing.&quot;&quot;&quot;</span>
 
@@ -993,8 +979,8 @@ By Author name not set
   </div>
   
   <!-- Scripts loaded after <body> so the DOM is not blocked -->
-  <script src="../../_static/scripts/bootstrap.js?digest=dfe6caa3a7d634c4db9b"></script>
-<script src="../../_static/scripts/pydata-sphinx-theme.js?digest=dfe6caa3a7d634c4db9b"></script>
+  <script defer src="../../_static/scripts/bootstrap.js?digest=8878045cc6db502f8baf"></script>
+<script defer src="../../_static/scripts/pydata-sphinx-theme.js?digest=8878045cc6db502f8baf"></script>
 
   <footer class="bd-footer">
   </footer>
