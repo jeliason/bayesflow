@@ -61,7 +61,7 @@ class Standardize(ElementwiseTransform):
             self.axis = tuple(range(data.ndim - 1))
 
         if self.mean is None:
-            self.mean = np.mean(data, axis=self.axis, keepdims=True)
+            self.mean = np.nanmean(data, axis=self.axis, keepdims=True)
         else:
             if self.momentum is not None and stage == "training":
                 self.mean = self.momentum * self.mean + (1.0 - self.momentum) * np.mean(
@@ -69,15 +69,17 @@ class Standardize(ElementwiseTransform):
                 )
 
         if self.std is None:
-            self.std = np.std(data, axis=self.axis, keepdims=True, ddof=1)
+            self.std = np.nanstd(data, axis=self.axis, keepdims=True, ddof=1)
         else:
             if self.momentum is not None and stage == "training":
                 self.std = self.momentum * self.std + (1.0 - self.momentum) * np.std(
                     data, axis=self.axis, keepdims=True, ddof=1
                 )
 
+        eps = 1e-8  # Small value to prevent division by zero
+
         mean = np.broadcast_to(self.mean, data.shape)
-        std = np.broadcast_to(self.std, data.shape)
+        std = np.broadcast_to(self.std, data.shape) + eps
 
         return (data - mean) / std
 

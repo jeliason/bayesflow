@@ -16,3 +16,5 @@ from .rename import Rename
 from .standardize import Standardize
 from .to_array import ToArray
 from .transform import Transform
+from .subsample import Subsample
+from .normalize import Normalize

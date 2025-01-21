@@ -23,8 +23,10 @@ from .transforms import (
     OneHot,
     Rename,
     Standardize,
+    Subsample,
     ToArray,
     Transform,
+    Normalize,
 )
 
 from .transforms.filter_transform import Predicate
@@ -237,6 +239,38 @@ class Adapter:
             exclude=exclude,
             **kwargs,
         )
+        self.transforms.append(transform)
+        return self
+    
+    def normalize(
+        self,
+        *,
+        predicate: Predicate = None,
+        include: str | Sequence[str] = None,
+        exclude: str | Sequence[str] = None,
+        **kwargs,
+    ):
+        transform = FilterTransform(
+            transform_constructor=Normalize,
+            predicate=predicate,
+            include=include,
+            exclude=exclude,
+            **kwargs,
+        )
+        self.transforms.append(transform)
+        return self
+    
+    def subsample(
+            self,
+            keys: str | Sequence[str],
+            *,
+            sampler: Callable[[int],Sequence[int]] = None,
+            axes: Sequence[int] = (1,1)
+        ):
+        if isinstance(keys, str):
+            keys = [keys]
+
+        transform = Subsample(keys,sampler=sampler,axes=axes)
         self.transforms.append(transform)
         return self
 

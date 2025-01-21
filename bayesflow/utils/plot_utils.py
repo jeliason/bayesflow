@@ -60,6 +60,9 @@ def prepare_plot_data(
     # Initialize figure
     fig, axes = make_figure(num_row, num_col, figsize=figsize)
 
+    if num_row == 1 and num_col == 1:
+        axes = np.array([axes])
+
     plot_data["fig"] = fig
     plot_data["axes"] = axes
     plot_data["num_row"] = num_row
