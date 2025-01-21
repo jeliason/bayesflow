@@ -66,7 +66,7 @@ def deserialize_value_or_type(config, name):
 
     See Also
     --------
-    `serialize_value_or_type`
+    serialize_value_or_type
     """
     updated_config = config.copy()
     if f"{PREFIX}{name}_type" in config:
